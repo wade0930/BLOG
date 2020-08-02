@@ -34,11 +34,15 @@ export default {
         }
     },
     methods:{
-        ...mapActions(['fetchArticles']),
+        ...mapActions(['fetchArticles','delArticle']),
         editArticle:function(id){
             this.$router.push({name:"Admin-Edit",params:{id:id}})
         },
         deletArticle:function(id){
+            const ensure = confirm("請問是否要繼續刪除這篇文章")
+            if(ensure){
+                this.delArticle(id)
+            }
             console.log(id)
         }
     },

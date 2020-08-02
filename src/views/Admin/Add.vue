@@ -37,11 +37,21 @@
 </template>
 
 <script>
-import {mapState,mapActions} from "vuex"
+import {mapState,mapActions,mapGetters} from "vuex"
 
 export default {
+   
+   mounted(){
+       if(this.$route.name ==="Admin-Edit"){
+            const id =this.$route.params.id
+            this.mode="edit"
+            this.$store.dispatch('CFI',id)
+       }
+   },
+
     data(){
         return{
+            mode:"add",
             formData:{
                 title:"",
                 date:"",
@@ -51,7 +61,7 @@ export default {
     },
 
     methods:{
-        ...mapActions(['addArticle']),
+        ...mapActions(['addArticle','updateArticle']),
         resetFormData:function(){
             this.formData ={
                 title:"",
@@ -61,12 +71,28 @@ export default {
         },
         submitFormData:function(){
             this.formData.date =new Date().getTime();
-            this.addArticle(this.formData)  
+            if(this.mode === "edit"){
+                this.updateArticle({id:this.$route.params.id,
+                newArticle:this.formData})
+            }
+            else{
+                 this.addArticle(this.formData)  
+            }
         },
     },
 
     computed:{
-        ...mapState(["account"])//裡面的名稱是綁定store的account
-    }      
+        ...mapState(["account","articleChange"]),//裡面的名稱是綁定store的account
+        ...mapGetters(['filterByID']),
+    },
+    watch:{
+        filterByID:function(){
+            this.formData.title =this.filterByID.title
+            this.formData.content =this.filterByID.content
+        },
+        articleChange:function(){
+            this.$router.push({name:"Admin-Home"})
+        }
+    }
 }
 </script>

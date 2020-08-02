@@ -1,22 +1,24 @@
 <template>
-   <article v-if="articles.length">
-       <h2>{{filterById[0].title}}</h2>
-       <h5>{{filterById[0].date}}</h5>
-       <p v-html="filterById[0].content"></p>
+   <article>
+       <h2>{{filterByID[0].title}}</h2>
+       <h5>{{filterByID[0].date}}</h5>
+       <p v-html="filterByID[0].content"></p>
    </article>
 </template>
 
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
+import {mapGetters} from "vuex"
 export default {
     mounted(){
         const id =this.$route.params.id
         this.artId=id
-        const api ="https://us-central1-expressapi-8c039.cloudfunctions.net/app/article"
-        axios.get(api).then(result=>{
-        this.articles = result.data.data
-    })
+        this.$store.dispatch('CFI',id)
+    //     const api ="https://us-central1-expressapi-8c039.cloudfunctions.net/app/article"
+    //     axios.get(api).then(result=>{
+    //     this.articles = result.data.data
+    // })
     },
     data(){
         return{
@@ -25,9 +27,10 @@ export default {
         }
     },
     computed:{
-        filterById:function(){
-            return this.articles.filter(art => art.id ===this.artId)
-        }
+        ...mapGetters(['filterByID'])
+        // filterById:function(){
+        //     return this.articles.filter(art => art.id ===this.artId)
+        // }
     }
 }
 </script>
